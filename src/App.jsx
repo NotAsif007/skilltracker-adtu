@@ -8,6 +8,7 @@ import { DiagnosticResultView } from './views/DiagnosticResultView';
 import { LeaderboardView } from './views/LeaderboardView';
 import { StudentProfileView } from './views/StudentProfileView';
 import { StudentTranscriptView } from './views/StudentTranscriptView';
+import { OverviewView } from './views/OverviewView';
 import { NotFoundView } from './views/NotFoundView';
 
 export function App() {
@@ -19,6 +20,7 @@ export function App() {
       {/* Main Student Portal App Layout */}
       <Route element={<AppLayout />}>
         <Route path="/student" element={<DashboardView />} />
+        <Route path="/student/overview" element={<OverviewView />} />
         <Route path="/student/dsa-track" element={<DsaTrackView />} />
         <Route path="/student/list" element={<LabsListView />} />
         <Route path="/student/result/:id" element={<DiagnosticResultView />} />

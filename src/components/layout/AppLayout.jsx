@@ -42,7 +42,7 @@ export const AppLayout = () => {
   useSwipeNavigation();
 
   return (
-    <div className="min-h-screen bg-[#faf9f5] text-[#1a1918] flex flex-col lg:flex-row antialiased">
+    <div className="min-h-screen eduhive-outer-canvas text-[#1a1918] flex flex-col lg:flex-row antialiased">
       {/* Top Navigation Progress Bar */}
       <TopProgressBar />
 
@@ -57,13 +57,14 @@ export const AppLayout = () => {
       {/* Desktop Command Sidebar (>= 1024px) */}
       <DesktopSidebar />
 
-      {/* Main Content Canvas */}
-      <div className="flex-1 flex flex-col min-w-0">
+      {/* Main Content Canvas (Eduhive Floating Studio Canvas on Desktop) */}
+      <div className="flex-1 flex flex-col min-w-0 lg:p-4 lg:pl-0">
         {/* Mobile Header (< 1024px) */}
         <MobileHeader />
 
-        {/* Dynamic Route Canvas with Safe-Area Clearance for Floating Islands */}
-        <main className="flex-1 pb-28 lg:pb-12 px-4 sm:px-6 lg:px-8 max-w-7xl w-full mx-auto pt-20 lg:pt-6 overflow-x-hidden">
+        {/* Dynamic Route Canvas inside Rounded Inner Container */}
+        <div className="flex-1 flex flex-col min-w-0 lg:bg-[#faf9f5]/90 lg:rounded-3xl lg:border lg:border-[#e6e3da]/80 lg:shadow-[0_8px_30px_rgb(0,0,0,0.03)] lg:overflow-hidden">
+          <main className="flex-1 pb-28 lg:pb-12 px-3 sm:px-6 lg:px-8 max-w-7xl w-full mx-auto pt-20 lg:pt-6 overflow-x-hidden">
           <AnimatePresence mode="wait">
             <motion.div
               key={location.pathname}
@@ -77,6 +78,7 @@ export const AppLayout = () => {
             </motion.div>
           </AnimatePresence>
         </main>
+        </div>
 
         {/* Floating Apple Liquid Glass Navigation (< 1024px) */}
         <MobileNavBar />

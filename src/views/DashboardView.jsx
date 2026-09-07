@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import {
-  Flame,
+  Sparkles,
   Award,
   BookOpen,
   CheckCircle2,
@@ -10,9 +10,17 @@ import {
   TrendingUp,
   Terminal,
   ChevronRight,
-  Sparkles,
-  ShieldCheck,
-  Zap
+  Play,
+  Calendar,
+  Flame,
+  Search,
+  Bell,
+  MoreVertical,
+  Bot,
+  Layers,
+  Code2,
+  Check,
+  Compass
 } from 'lucide-react';
 import { useStudent } from '../context/StudentContext';
 
@@ -21,14 +29,15 @@ export const DashboardView = () => {
     student,
     labs,
     dsaProblems,
-    triggerTestNotification,
-    notificationPermission,
-    requestNotificationPermission
+    leaderboard,
+    unreadNotificationsCount,
+    setIsNotificationDrawerOpen
   } = useStudent();
 
   const [timeLeft, setTimeLeft] = useState({ hours: 4, minutes: 11, seconds: 45 });
+  const [selectedStatDay, setSelectedStatDay] = useState('Wed');
 
-  // Live countdown timer
+  // Live countdown timer for priority deadline
   useEffect(() => {
     const timer = setInterval(() => {
       setTimeLeft((prev) => {
@@ -41,246 +50,714 @@ export const DashboardView = () => {
     return () => clearInterval(timer);
   }, []);
 
-  const activeLab = labs.find((l) => l.status === 'active');
+  const activeLab = labs.find((l) => l.status === 'active') || labs[0];
   const unsolvedDsa = dsaProblems.find((p) => !p.solved);
+  const topCohort = leaderboard.slice(0, 4);
 
-  // Generate 30 days commit streak grid data
-  const streakDays = Array.from({ length: 30 }, (_, i) => {
-    const day = 30 - i;
-    const isSolved = day <= student.streakDays || day % 3 === 0;
-    return { day, solved: isSolved, count: isSolved ? (day % 4) + 1 : 0 };
-  });
+  // Weekly study data for Eduhive striped bar chart
+  const weeklyStats = [
+    { day: 'Sun', activeHours: 4.5, goalHours: 6.0, percent: 75 },
+    { day: 'Mon', activeHours: 7.0, goalHours: 8.0, percent: 88 },
+    { day: 'Tue', activeHours: 5.2, goalHours: 7.5, percent: 69 },
+    { day: 'Wed', activeHours: 7.2, goalHours: 8.0, percent: 90, highlighted: true },
+    { day: 'Thu', activeHours: 6.0, goalHours: 7.5, percent: 80 },
+    { day: 'Fri', activeHours: 3.5, goalHours: 6.0, percent: 58 },
+    { day: 'Sat', activeHours: 5.8, goalHours: 7.0, percent: 82 }
+  ];
 
   return (
-    <div className="space-y-6 sm:space-y-8">
-      {/* Welcome Banner */}
-      <div className="card-pop stagger-1 flex flex-col sm:flex-row sm:items-center justify-between gap-5 p-6 sm:p-7 rounded-3xl bg-white border border-[#e6e3da] shadow-sm">
-        <div>
-          <div className="flex items-center gap-2 mb-2">
-            <span className="text-xs sm:text-sm font-bold uppercase tracking-wider text-[#d97757] bg-[#d97757]/10 px-3 py-1 rounded-full border border-[#d97757]/20">
-              Session 2026
-            </span>
-            <span className="text-xs sm:text-sm font-semibold text-[#78756c]">Semester 5 &bull; Section A</span>
-          </div>
-          <h1 className="text-2xl sm:text-3xl lg:text-4xl font-black tracking-tight text-[#1a1918]">
-            Welcome back, {student.name.split(' ')[0]}
-          </h1>
-          <p className="text-sm sm:text-base text-[#4f4c46] mt-1.5 font-mono">
-            {student.id} &bull; {student.program}
-          </p>
-        </div>
+    <div className="space-y-6 sm:space-y-7">
 
-        <div className="flex items-center gap-3 shrink-0">
-          {notificationPermission !== 'granted' && (
+      {/* ========================================================================= */}
+      {/* 1. DESKTOP VIEW: FULL EDUHIVE-INSPIRED DASHBOARD (>= 1024px)              */}
+      {/* ========================================================================= */}
+      <div className="hidden lg:block space-y-6">
+
+        {/* ── Eduhive Top Bar: Welcome Back + Quick Actions ── */}
+        <div className="card-pop stagger-1 flex items-center justify-between p-6 rounded-3xl bg-white border border-[#e6e3da]/80 eduhive-card-shadow">
+          <div>
+            <div className="flex items-center gap-2">
+              <h1 className="text-2xl font-black tracking-tight text-[#1a1918]">
+                Welcome Back 👋
+              </h1>
+            </div>
+            <p className="text-xs text-[#78756c] font-medium mt-1">
+              Semester 5 &bull; Section A &bull; Let's master something new today!
+            </p>
+          </div>
+
+          <div className="flex items-center gap-3">
+            <div className="relative">
+              <Search className="w-4 h-4 text-[#9e9a90] absolute left-3.5 top-1/2 -translate-y-1/2" />
+              <input
+                type="text"
+                placeholder="Search subjects, labs..."
+                className="pl-9 pr-4 py-2 rounded-2xl bg-[#faf9f5] border border-[#e6e3da] text-xs font-medium text-[#1a1918] placeholder-[#9e9a90] focus:outline-none focus:border-[#d97757] w-60 transition-all"
+              />
+            </div>
+
             <button
-              whiletap="true"
               type="button"
-              onClick={requestNotificationPermission}
-              className="flex items-center gap-2 px-4 sm:px-5 py-2.5 text-xs sm:text-sm font-bold rounded-2xl bg-[#d97757] hover:bg-[#c15f3e] active:scale-95 text-white transition-all shadow-sm"
+              onClick={() => setIsNotificationDrawerOpen(true)}
+              className="relative p-2.5 rounded-2xl bg-[#faf9f5] border border-[#e6e3da] text-[#4f4c46] hover:text-[#1a1918] hover:bg-[#edeae2] transition-colors"
+              title="Notifications"
             >
-              <Sparkles className="w-4 h-4" />
-              <span>Enable Push Alerts</span>
+              <Bell className="w-4 h-4 stroke-[2.2]" />
+              {unreadNotificationsCount > 0 && (
+                <span className="absolute top-1.5 right-1.5 w-2 h-2 rounded-full th-bg ring-2 ring-white" />
+              )}
             </button>
-          )}
-          <Link
-            to="/student/transcript"
-            className="flex items-center gap-2 px-4 sm:px-5 py-2.5 text-xs sm:text-sm font-bold rounded-2xl bg-[#f4f2eb] hover:bg-[#edeae2] text-[#1a1918] border border-[#e6e3da] transition-colors"
-          >
-            <ShieldCheck className="w-4 h-4 text-[#3e7b54]" />
-            <span>Official Transcript</span>
-          </Link>
-        </div>
-      </div>
 
-      {/* 4 Stat Cards */}
-      <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-5">
-        <div className="card-pop stagger-2 p-5 sm:p-6 rounded-3xl bg-white border border-[#e6e3da] shadow-sm hover:shadow-md hover:scale-[1.015] transition-all">
-          <div className="flex items-center justify-between text-[#78756c]">
-            <span className="text-xs sm:text-sm font-black uppercase tracking-wider">Cumulative CGPA</span>
-            <div className="w-8 h-8 rounded-xl bg-[#d97757]/10 text-[#d97757] flex items-center justify-center">
-              <Award className="w-4 h-4 stroke-[2.2]" />
-            </div>
+            <Link
+              to="/student/profile"
+              className="flex items-center gap-2.5 pl-2 pr-3 py-1.5 rounded-2xl bg-[#faf9f5] border border-[#e6e3da] hover:border-[#c7c3b6] transition-colors"
+            >
+              <div className="w-8 h-8 rounded-xl th-bg text-white font-black text-xs flex items-center justify-center">
+                {student.name.charAt(0)}
+              </div>
+              <div className="text-left">
+                <span className="text-xs font-bold text-[#1a1918] block leading-tight">{student.name.split(' ')[0]}</span>
+                <span className="text-[10px] text-[#78756c] font-mono">#{student.cohortRank} in Class</span>
+              </div>
+            </Link>
           </div>
-          <div className="mt-3 flex items-baseline gap-1.5">
-            <span className="text-3xl sm:text-4xl font-black tracking-tight text-[#1a1918]">{student.cgpa}</span>
-            <span className="text-sm font-semibold text-[#78756c]">/ 10.0</span>
-          </div>
-          <span className="text-xs sm:text-sm font-bold text-[#3e7b54] mt-2 inline-flex items-center gap-1">
-            <TrendingUp className="w-3.5 h-3.5" /> Top 5% in CSE Cohort
-          </span>
         </div>
 
-        <div className="card-pop stagger-3 p-5 sm:p-6 rounded-3xl bg-white border border-[#e6e3da] shadow-sm hover:shadow-md hover:scale-[1.015] transition-all">
-          <div className="flex items-center justify-between text-[#78756c]">
-            <span className="text-xs sm:text-sm font-black uppercase tracking-wider">Cohort Standing</span>
-            <div className="w-8 h-8 rounded-xl bg-[#f4f2eb] text-[#1a1918] flex items-center justify-center border border-[#e6e3da]">
-              <TrendingUp className="w-4 h-4 stroke-[2.2]" />
-            </div>
-          </div>
-          <div className="mt-3 flex items-baseline gap-1.5">
-            <span className="text-3xl sm:text-4xl font-black tracking-tight text-[#d97757]">#{student.cohortRank}</span>
-            <span className="text-sm font-semibold text-[#78756c]">of {student.totalCohortSize}</span>
-          </div>
-          <Link to="/student/leaderboard" className="text-xs sm:text-sm font-bold text-[#d97757] hover:underline mt-2 inline-block">
-            Full 59 standings &rarr;
-          </Link>
-        </div>
+        {/* ── Eduhive Grid Row 1: Featured Course + Progress + Activity + Community ── */}
+        <div className="grid grid-cols-12 gap-5">
 
-        <div className="card-pop stagger-4 p-5 sm:p-6 rounded-3xl bg-white border border-[#e6e3da] shadow-sm hover:shadow-md hover:scale-[1.015] transition-all">
-          <div className="flex items-center justify-between text-[#78756c]">
-            <span className="text-xs sm:text-sm font-black uppercase tracking-wider">Attendance</span>
-            <div className="w-8 h-8 rounded-xl bg-[#3e7b54]/10 text-[#3e7b54] flex items-center justify-center">
-              <CheckCircle2 className="w-4 h-4 stroke-[2.2]" />
-            </div>
-          </div>
-          <div className="mt-3 flex items-baseline gap-1.5">
-            <span className="text-3xl sm:text-4xl font-black tracking-tight text-[#1a1918]">{student.attendanceRate}%</span>
-          </div>
-          <span className="text-xs sm:text-sm font-medium text-[#78756c] mt-2 block">Threshold: 75% mandatory</span>
-        </div>
-
-        <div className="card-pop stagger-5 p-5 sm:p-6 rounded-3xl bg-white border border-[#e6e3da] shadow-sm hover:shadow-md hover:scale-[1.015] transition-all">
-          <div className="flex items-center justify-between text-[#78756c]">
-            <span className="text-xs sm:text-sm font-black uppercase tracking-wider">DSA 300 Solved</span>
-            <div className="w-8 h-8 rounded-xl bg-[#d97757]/10 text-[#d97757] flex items-center justify-center">
-              <Terminal className="w-4 h-4 stroke-[2.2]" />
-            </div>
-          </div>
-          <div className="mt-3 flex items-baseline gap-1.5">
-            <span className="text-3xl sm:text-4xl font-black tracking-tight text-[#1a1918]">{student.totalProblemsSolved}</span>
-            <span className="text-sm font-semibold text-[#78756c]">/ 300</span>
-          </div>
-          <div className="w-full bg-[#f4f2eb] h-2.5 rounded-full mt-3 overflow-hidden border border-[#e6e3da]">
-            <div className="bg-[#d97757] h-full rounded-full transition-all duration-500" style={{ width: `${(student.totalProblemsSolved / 300) * 100}%` }} />
-          </div>
-        </div>
-      </div>
-
-      {/* Deadline Radar + Next DSA */}
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-5">
-        {activeLab && (
-          <div className="card-pop stagger-6 lg:col-span-2 p-6 sm:p-7 rounded-3xl bg-white border border-[#e6e3da] shadow-sm flex flex-col justify-between">
+          {/* Card A: Featured Skill / Continuous Lab Focus (Span 5) */}
+          <div className="col-span-5 card-pop stagger-2 p-6 rounded-3xl bg-white border border-[#e6e3da]/80 eduhive-card-shadow flex flex-col justify-between">
             <div>
-              <div className="flex items-center justify-between gap-2 mb-3">
-                <div className="flex items-center gap-2">
-                  <span className="p-2 rounded-xl bg-[#b87728]/10 text-[#b87728] border border-[#b87728]/20">
-                    <Clock className="w-4 h-4 stroke-[2.2]" />
-                  </span>
-                  <span className="text-xs sm:text-sm font-black text-[#1a1918] uppercase tracking-wider">Urgent Deadline Radar</span>
-                </div>
-                <span className="text-xs sm:text-sm font-mono font-bold px-3 py-1 rounded-lg bg-[#f4f2eb] text-[#b87728] border border-[#e6e3da]">{activeLab.courseCode}</span>
+              <div className="flex items-center justify-between mb-3">
+                <span className="text-[11px] font-bold px-2.5 py-0.5 rounded-full th-bg-subtle th-text border th-border-subtle uppercase tracking-wider">
+                  Active Priority Track
+                </span>
+                <span className="text-xs font-mono font-bold text-[#78756c]">CS502 &bull; Lab 05</span>
               </div>
-              <h3 className="text-xl sm:text-2xl font-black text-[#1a1918] mt-2 mb-2">{activeLab.title}</h3>
-              <p className="text-sm sm:text-base text-[#4f4c46] leading-relaxed">{activeLab.description}</p>
+              <h2 className="text-lg font-black text-[#1a1918] tracking-tight leading-snug">
+                Data Structures &amp; Virtual Memory
+              </h2>
+              
+              {/* Meta tags with icons */}
+              <div className="flex items-center gap-4 mt-3 text-xs font-semibold text-[#78756c]">
+                <span className="flex items-center gap-1.5">
+                  <Clock className="w-3.5 h-3.5 th-text" /> 1 hr 40 mnts
+                </span>
+                <span className="flex items-center gap-1.5">
+                  <BookOpen className="w-3.5 h-3.5 text-[#ffb23f]" /> 8 chapters
+                </span>
+                <span className="flex items-center gap-1.5">
+                  <Terminal className="w-3.5 h-3.5 text-[#f43f5e]" /> 142 solved
+                </span>
+              </div>
             </div>
-            <div className="flex flex-wrap items-center justify-between gap-4 pt-5 mt-5 border-t border-[#e6e3da]">
-              <div className="flex items-center gap-2.5">
-                <span className="font-semibold text-sm text-[#78756c]">Time Remaining:</span>
-                <div className="flex items-center gap-1.5 font-mono text-base sm:text-lg font-bold text-[#d97757] bg-[#f4f2eb] px-3.5 py-1.5 rounded-xl border border-[#e6e3da]">
-                  <span>{String(timeLeft.hours).padStart(2, '0')}h</span>
-                  <span>:</span>
-                  <span>{String(timeLeft.minutes).padStart(2, '0')}m</span>
-                  <span>:</span>
-                  <span>{String(timeLeft.seconds).padStart(2, '0')}s</span>
+
+            <div className="mt-6 pt-4 border-t border-[#f4f2eb]">
+              <div className="flex items-center justify-between text-xs font-bold mb-2">
+                <span className="text-[#78756c]">Module completion</span>
+                <span className="th-text font-mono">60%</span>
+              </div>
+              <div className="w-full bg-[#f4f2eb] h-2.5 rounded-full overflow-hidden border border-[#e6e3da]">
+                <div className="th-bg h-full rounded-full transition-all duration-700" style={{ width: '60%' }} />
+              </div>
+
+              <div className="mt-4 flex items-center justify-between">
+                <Link
+                  to="/student/dsa-track"
+                  className="flex items-center gap-2 px-4 py-2 rounded-2xl th-bg text-white text-xs font-bold shadow-xs hover:opacity-95 transition-opacity"
+                >
+                  <Play className="w-3.5 h-3.5 fill-current" />
+                  <span>Continue practice</span>
+                </Link>
+                <span className="text-[11px] font-medium text-[#9e9a90]">Daily target: 2/3 done</span>
+              </div>
+            </div>
+          </div>
+
+          {/* Card B: Progress Summary Card (Span 2) */}
+          <div className="col-span-2 card-pop stagger-3 p-5 rounded-3xl bg-white border border-[#e6e3da]/80 eduhive-card-shadow flex flex-col justify-between">
+            <div className="flex items-center justify-between">
+              <span className="text-xs font-black text-[#1a1918]">Progress</span>
+              <span className="text-[10px] font-bold px-2 py-0.5 rounded-md bg-[#faf9f5] border border-[#e6e3da] text-[#78756c]">
+                Month &or;
+              </span>
+            </div>
+
+            <div className="space-y-3.5 my-3">
+              <div className="flex items-start gap-2.5">
+                <span className="w-2.5 h-2.5 rounded-full bg-[#f43f5e] mt-1 shrink-0" />
+                <div>
+                  <div className="text-xs font-black text-[#1a1918]">40 hours</div>
+                  <div className="text-[10px] text-[#78756c]">Time invested</div>
                 </div>
               </div>
-              <Link to="/student/list" className="flex items-center gap-2 px-5 py-2.5 rounded-2xl bg-[#d97757] hover:bg-[#c15f3e] text-sm font-bold text-white transition-colors shadow-sm">
-                <span>Submit Lab Solution</span>
-                <ArrowRight className="w-4 h-4" />
+
+              <div className="flex items-start gap-2.5">
+                <span className="w-2.5 h-2.5 rounded-full bg-[#ffb23f] mt-1 shrink-0" />
+                <div>
+                  <div className="text-xs font-black text-[#1a1918]">18 labs</div>
+                  <div className="text-[10px] text-[#78756c]">Completed (90%)</div>
+                </div>
+              </div>
+
+              <div className="flex items-start gap-2.5">
+                <span className="w-2.5 h-2.5 rounded-full th-bg mt-1 shrink-0" />
+                <div>
+                  <div className="text-xs font-black text-[#1a1918]">02 active</div>
+                  <div className="text-[10px] text-[#78756c]">Continuous tasks</div>
+                </div>
+              </div>
+            </div>
+
+            <div className="pt-2 border-t border-[#f4f2eb] text-[10px] font-bold text-[#3e7b54] flex items-center gap-1">
+              <TrendingUp className="w-3 h-3" /> +14% vs last mo.
+            </div>
+          </div>
+
+          {/* Card C: Your Activity (Streak & 2-row dots) (Span 2) */}
+          <div className="col-span-2 card-pop stagger-4 p-5 rounded-3xl bg-white border border-[#e6e3da]/80 eduhive-card-shadow flex flex-col justify-between">
+            <span className="text-xs font-black text-[#1a1918]">Your Activity</span>
+
+            <div>
+              <div className="text-2xl font-black text-[#1a1918] font-mono leading-none">
+                17 <span className="text-xs font-bold text-[#78756c] font-sans">Days</span>
+              </div>
+              <p className="text-[11px] font-semibold text-[#78756c] mt-1">65 hours 20 minutes</p>
+            </div>
+
+            {/* 2-row Dot Matrix (Eduhive style) */}
+            <div className="space-y-1.5 pt-2">
+              <div className="flex items-center gap-1.5 justify-between">
+                {[...Array(7)].map((_, i) => (
+                  <span key={`d1-${i}`} className="w-2.5 h-2.5 rounded-full bg-[#ffb23f] shadow-2xs" title="Day active" />
+                ))}
+              </div>
+              <div className="flex items-center gap-1.5 justify-between">
+                {[...Array(7)].map((_, i) => (
+                  <span key={`d2-${i}`} className={`w-2.5 h-2.5 rounded-full ${i < 3 ? 'th-bg' : 'bg-[#e6e3da]'}`} />
+                ))}
+              </div>
+            </div>
+
+            <span className="text-[10px] font-bold th-text block pt-1">Active streak alive 🔥</span>
+          </div>
+
+          {/* Card D: Keep Excelling / Cohort Community Banner (Span 3) */}
+          <div className="col-span-3 card-pop stagger-5 p-5 rounded-3xl bg-[#1a1918] text-white flex flex-col justify-between relative overflow-hidden shadow-md">
+            {/* Soft ambient orange glow */}
+            <div className="absolute -right-8 -bottom-8 w-32 h-32 rounded-full th-bg/30 blur-2xl pointer-events-none" />
+
+            <div>
+              <span className="text-[10px] font-black uppercase tracking-wider text-[#ffb23f] block mb-1">
+                ADTU CSE 2024-28
+              </span>
+              <h3 className="text-base font-black tracking-tight leading-snug text-white">
+                Keep Learning New Things Everyday
+              </h3>
+              <p className="text-[11px] text-[#c7c3b6] mt-2 leading-relaxed">
+                You are currently ranked <strong>#2 of 59</strong> in continuous lab assessments and DSA progress.
+              </p>
+            </div>
+
+            <div className="mt-4 pt-3 border-t border-white/10 flex items-center justify-between">
+              <Link
+                to="/student/leaderboard"
+                className="px-3.5 py-1.5 rounded-xl bg-white text-[#1a1918] text-xs font-black hover:bg-[#faf9f5] transition-colors"
+              >
+                Cohort Standing &rarr;
+              </Link>
+              <span className="text-xs font-mono font-bold th-text">2840 pts</span>
+            </div>
+          </div>
+
+        </div>
+
+        {/* ── Eduhive Grid Row 2: Study Statistics (Striped Bars) + Multi-Ring Tracker + Faculty/Mentors ── */}
+        <div className="grid grid-cols-12 gap-5">
+
+          {/* Card A: Study Statistics (Striped Bar Chart) (Span 5) */}
+          <div className="col-span-5 card-pop stagger-6 p-6 rounded-3xl bg-white border border-[#e6e3da]/80 eduhive-card-shadow">
+            <div className="flex items-center justify-between mb-4">
+              <div>
+                <h3 className="text-sm font-black text-[#1a1918]">Study Statistics</h3>
+                <p className="text-[11px] text-[#78756c]">Daily continuous practice vs goals</p>
+              </div>
+              <span className="text-xs font-bold px-2.5 py-1 rounded-xl bg-[#faf9f5] border border-[#e6e3da] text-[#78756c]">
+                Weekly &or;
+              </span>
+            </div>
+
+            {/* Hatched Bar Chart */}
+            <div className="h-44 pt-6 flex items-end justify-between gap-3 px-2 border-b border-[#f4f2eb] relative">
+              {/* Tooltip on Wednesday (Eduhive style) */}
+              <div className="absolute top-0 left-1/2 -translate-x-3 bg-[#1a1918] text-white text-[10px] font-bold px-2.5 py-1 rounded-lg shadow-md flex items-center gap-1.5 z-10 pointer-events-none">
+                <span className="w-1.5 h-1.5 rounded-full th-bg" />
+                <span>Active: 7.2h</span>
+                <span className="text-[#9e9a90]">&bull; 0.8h off</span>
+              </div>
+
+              {weeklyStats.map((item) => {
+                const isSelected = item.day === selectedStatDay;
+                return (
+                  <div
+                    key={item.day}
+                    onClick={() => setSelectedStatDay(item.day)}
+                    className="flex-1 flex flex-col items-center h-full justify-end group cursor-pointer"
+                  >
+                    {/* Bar Container */}
+                    <div className="w-full max-w-[28px] h-full bg-[#f4f2eb] rounded-lg overflow-hidden flex flex-col justify-end relative border border-[#e6e3da]/60">
+                      {/* Active Fill with Stripes */}
+                      <div
+                        className={`w-full rounded-b-lg transition-all duration-500 ${
+                          isSelected || item.highlighted
+                            ? 'bg-stripes-accent shadow-xs'
+                            : 'bg-stripes-goal group-hover:opacity-90'
+                        }`}
+                        style={{ height: `${item.percent}%` }}
+                      />
+                    </div>
+                    <span className={`text-[11px] font-bold mt-2 transition-colors ${
+                      isSelected ? 'th-text font-black' : 'text-[#78756c]'
+                    }`}>
+                      {item.day}
+                    </span>
+                  </div>
+                );
+              })}
+            </div>
+
+            {/* Legend */}
+            <div className="flex items-center gap-5 mt-3 text-xs font-semibold text-[#78756c]">
+              <span className="flex items-center gap-1.5">
+                <span className="w-2.5 h-2.5 rounded-full th-bg" /> Active Hours
+              </span>
+              <span className="flex items-center gap-1.5">
+                <span className="w-2.5 h-2.5 rounded-full bg-[#e6e3da]" /> Target Goal
+              </span>
+            </div>
+          </div>
+
+          {/* Card B: Learn Tracking (Concentric Radial Rings) (Span 3) */}
+          <div className="col-span-3 card-pop stagger-7 p-6 rounded-3xl bg-white border border-[#e6e3da]/80 eduhive-card-shadow flex flex-col justify-between">
+            <div className="flex items-center justify-between">
+              <h3 className="text-sm font-black text-[#1a1918]">Learn Tracking</h3>
+              <MoreVertical className="w-4 h-4 text-[#9e9a90]" />
+            </div>
+
+            {/* Multi-Ring SVG Visual */}
+            <div className="relative flex items-center justify-center my-2">
+              <svg className="w-36 h-36 -rotate-90" viewBox="0 0 120 120">
+                {/* Outer Ring: Month (Coral) */}
+                <circle cx="60" cy="60" r="48" fill="none" stroke="#f4f2eb" strokeWidth="6" />
+                <circle
+                  cx="60" cy="60" r="48" fill="none"
+                  stroke="var(--accent)" strokeWidth="6"
+                  strokeDasharray="301.59" strokeDashoffset="75"
+                  strokeLinecap="round"
+                />
+
+                {/* Middle Ring: Week (Yellow) */}
+                <circle cx="60" cy="60" r="38" fill="none" stroke="#f4f2eb" strokeWidth="6" />
+                <circle
+                  cx="60" cy="60" r="38" fill="none"
+                  stroke="#ffb23f" strokeWidth="6"
+                  strokeDasharray="238.76" strokeDashoffset="45"
+                  strokeLinecap="round"
+                />
+
+                {/* Inner Ring: Day (Rose) */}
+                <circle cx="60" cy="60" r="28" fill="none" stroke="#f4f2eb" strokeWidth="6" />
+                <circle
+                  cx="60" cy="60" r="28" fill="none"
+                  stroke="#f43f5e" strokeWidth="6"
+                  strokeDasharray="175.93" strokeDashoffset="35"
+                  strokeLinecap="round"
+                />
+              </svg>
+
+              {/* Center Readout Card */}
+              <div className="absolute inset-0 flex flex-col items-center justify-center">
+                <span className="text-base font-black text-[#1a1918] font-mono leading-none">16%</span>
+                <span className="text-[9px] font-bold text-[#78756c] tracking-tight mt-0.5">Goal Dist.</span>
+              </div>
+            </div>
+
+            {/* Legend with Dots */}
+            <div className="flex items-center justify-around text-[10px] font-bold pt-2 border-t border-[#f4f2eb]">
+              <span className="flex items-center gap-1 text-[#1a1918]">
+                <span className="w-2 h-2 rounded-full th-bg" /> Month
+              </span>
+              <span className="flex items-center gap-1 text-[#1a1918]">
+                <span className="w-2 h-2 rounded-full bg-[#ffb23f]" /> Week
+              </span>
+              <span className="flex items-center gap-1 text-[#1a1918]">
+                <span className="w-2 h-2 rounded-full bg-[#f43f5e]" /> Day
+              </span>
+            </div>
+          </div>
+
+          {/* Card C: Top Mentors & Cohort Leaders (Span 4) */}
+          <div className="col-span-4 card-pop stagger-8 p-6 rounded-3xl bg-white border border-[#e6e3da]/80 eduhive-card-shadow flex flex-col justify-between">
+            <div className="flex items-center justify-between mb-2">
+              <h3 className="text-sm font-black text-[#1a1918]">Faculty &amp; Leaders</h3>
+              <Link to="/student/leaderboard" className="text-xs font-bold th-text hover:underline">
+                View all
+              </Link>
+            </div>
+
+            <div className="divide-y divide-[#f4f2eb]">
+              {/* Advisor */}
+              <div className="py-2.5 flex items-center justify-between">
+                <div className="flex items-center gap-2.5 min-w-0">
+                  <div className="w-8 h-8 rounded-full bg-[#3e7b54]/15 text-[#3e7b54] flex items-center justify-center font-bold text-xs shrink-0">
+                    RS
+                  </div>
+                  <div className="min-w-0">
+                    <div className="text-xs font-bold text-[#1a1918] truncate">Dr. R. K. Sarma</div>
+                    <div className="text-[10px] text-[#78756c] truncate">Faculty Advisor &bull; Assoc. Prof</div>
+                  </div>
+                </div>
+                <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-[#3e7b54]/10 text-[#3e7b54] shrink-0">
+                  Faculty
+                </span>
+              </div>
+
+              {/* Student #1 */}
+              {topCohort[0] && (
+                <div className="py-2.5 flex items-center justify-between">
+                  <div className="flex items-center gap-2.5 min-w-0">
+                    <div className="w-8 h-8 rounded-full bg-[#c4ad8f] text-white flex items-center justify-center font-bold text-xs shrink-0">
+                      {topCohort[0].name.charAt(0)}
+                    </div>
+                    <div className="min-w-0">
+                      <div className="text-xs font-bold text-[#1a1918] truncate">{topCohort[0].name}</div>
+                      <div className="text-[10px] text-[#78756c] truncate">Rank #1 &bull; 148 DSA</div>
+                    </div>
+                  </div>
+                  <span className="text-xs font-mono font-black text-[#1a1918]">{topCohort[0].score} pts</span>
+                </div>
+              )}
+
+              {/* Student #2 (You) */}
+              <div className="py-2.5 flex items-center justify-between">
+                <div className="flex items-center gap-2.5 min-w-0">
+                  <div className="w-8 h-8 rounded-full th-bg text-white flex items-center justify-center font-bold text-xs shrink-0 ring-2 th-ring">
+                    {student.name.charAt(0)}
+                  </div>
+                  <div className="min-w-0">
+                    <div className="text-xs font-black text-[#1a1918] truncate flex items-center gap-1.5">
+                      <span>{student.name}</span>
+                      <span className="text-[9px] th-bg text-white px-1.5 py-0.2 rounded font-black">YOU</span>
+                    </div>
+                    <div className="text-[10px] text-[#78756c] truncate">Rank #2 &bull; 142 DSA &bull; 18 Labs</div>
+                  </div>
+                </div>
+                <span className="text-xs font-mono font-black th-text">{student.score || 2840} pts</span>
+              </div>
+            </div>
+
+            <div className="pt-2 text-[10px] text-center text-[#9e9a90] font-medium">
+              Evaluated based on automated lab tests and LeetCode tracks
+            </div>
+          </div>
+
+        </div>
+
+        {/* ── Eduhive Grid Row 3: Speedometer Gauge + Urgent Deadline Radar ── */}
+        <div className="grid grid-cols-12 gap-5">
+
+          {/* Semicircular Speedometer Gauge (Span 4) */}
+          <div className="col-span-4 card-pop stagger-7 p-6 rounded-3xl bg-white border border-[#e6e3da]/80 eduhive-card-shadow flex items-center justify-between gap-4">
+            <div>
+              <span className="text-xs font-black text-[#78756c] uppercase tracking-wider block">
+                Learning Progress
+              </span>
+              <div className="text-xs font-bold text-[#3e7b54] flex items-center gap-1 mt-1">
+                <TrendingUp className="w-3.5 h-3.5" /> 11.2% &uarr;
+              </div>
+              <p className="text-[11px] text-[#78756c] mt-1">Compared to last month</p>
+              <div className="mt-3 text-xs font-bold text-[#1a1918]">
+                CGPA: <span className="text-base font-black th-text">{student.cgpa}</span> / 10.0
+              </div>
+            </div>
+
+            {/* Radial Speedometer graphic */}
+            <div className="relative flex flex-col items-center justify-center">
+              <svg className="w-28 h-18 overflow-visible" viewBox="0 0 100 55">
+                <path
+                  d="M 10 50 A 40 40 0 0 1 90 50"
+                  fill="none"
+                  stroke="#f4f2eb"
+                  strokeWidth="8"
+                  strokeLinecap="round"
+                />
+                <path
+                  d="M 10 50 A 40 40 0 0 1 90 50"
+                  fill="none"
+                  stroke="#ffb23f"
+                  strokeWidth="8"
+                  strokeDasharray="125.6"
+                  strokeDashoffset="32"
+                  strokeLinecap="round"
+                />
+              </svg>
+              <div className="absolute top-7 text-center">
+                <span className="text-xl font-black text-[#1a1918] font-mono leading-none">74%</span>
+                <span className="text-[9px] font-bold text-[#9e9a90] block">Index</span>
+              </div>
+            </div>
+          </div>
+
+          {/* Urgent Deadline Radar (Span 8) */}
+          <div className="col-span-8 card-pop stagger-8 p-6 rounded-3xl bg-white border border-[#e6e3da]/80 eduhive-card-shadow flex items-center justify-between gap-6">
+            <div className="flex items-start gap-4">
+              <div className="w-12 h-12 rounded-2xl bg-[#b87728]/10 text-[#b87728] border border-[#b87728]/20 flex items-center justify-center shrink-0">
+                <Clock className="w-6 h-6 stroke-[2.2]" />
+              </div>
+              <div>
+                <div className="flex items-center gap-2">
+                  <span className="text-xs font-black text-[#b87728] uppercase tracking-wider">
+                    Urgent Deadline Radar
+                  </span>
+                  <span className="text-xs font-mono font-bold px-2 py-0.5 rounded bg-[#faf9f5] border border-[#e6e3da] text-[#78756c]">
+                    {activeLab.courseCode}
+                  </span>
+                </div>
+                <h4 className="text-base font-black text-[#1a1918] mt-1">{activeLab.title}</h4>
+                <p className="text-xs text-[#78756c] mt-0.5 line-clamp-1">{activeLab.description}</p>
+              </div>
+            </div>
+
+            <div className="flex items-center gap-4 shrink-0">
+              <div className="text-right font-mono font-bold text-sm th-text bg-[#faf9f5] px-3 py-1.5 rounded-xl border border-[#e6e3da]">
+                {String(timeLeft.hours).padStart(2, '0')}h : {String(timeLeft.minutes).padStart(2, '0')}m : {String(timeLeft.seconds).padStart(2, '0')}s
+              </div>
+              <Link
+                to="/student/list"
+                className="px-4 py-2 rounded-xl th-bg text-white text-xs font-bold shadow-xs hover:opacity-95 transition-opacity"
+              >
+                Submit Solution &rarr;
               </Link>
             </div>
           </div>
-        )}
 
-        <div className="card-pop stagger-7 p-6 sm:p-7 rounded-3xl bg-white border border-[#e6e3da] shadow-sm flex flex-col justify-between">
-          <div>
-            <div className="flex items-center justify-between text-xs text-[#78756c] mb-3">
-              <span className="font-bold text-sm text-[#1a1918] flex items-center gap-2">
-                <Terminal className="w-4 h-4 text-[#d97757]" />
-                <span>Next DSA Problem</span>
-              </span>
-              <span className="text-xs font-semibold px-2 py-0.5 rounded-md bg-[#b87728]/10 text-[#b87728] border border-[#b87728]/20">
-                {unsolvedDsa ? unsolvedDsa.difficulty : 'Medium'}
-              </span>
+        </div>
+
+      </div>
+
+      {/* ========================================================================= */}
+      {/* 2. MOBILE VIEW: FULL STUDYZEN-INSPIRED MOBILE FLOW (< 1024px)            */}
+      {/* ========================================================================= */}
+      <div className="lg:hidden space-y-5 pb-6">
+
+        {/* ── StudyZen Hero Card: Gradient Focus Session ── */}
+        <div className="card-pop stagger-1 p-5 rounded-[28px] th-bg text-white shadow-lg relative overflow-hidden">
+          {/* Subtle decorative glow */}
+          <div className="absolute -right-6 -bottom-6 w-32 h-32 bg-white/15 rounded-full blur-xl pointer-events-none" />
+
+          <div className="flex items-start justify-between relative z-10">
+            <div className="max-w-[70%]">
+              <h2 className="text-lg font-black tracking-tight leading-snug">Data Structures</h2>
+              <p className="text-xs text-white/80 mt-1 leading-relaxed">
+                Today's Focus: 2 of 5 Sessions Complete Successfully
+              </p>
             </div>
-            <h4 className="text-base font-bold text-[#1a1918] mt-3 leading-snug">
-              {unsolvedDsa ? unsolvedDsa.title : 'Longest Substring Without Repeating Characters'}
-            </h4>
-            <p className="text-sm sm:text-base text-[#4f4c46] mt-1.5">
-              Category: <span className="font-bold text-[#1a1918]">{unsolvedDsa ? unsolvedDsa.category : 'Sliding Window'}</span>
+            
+            {/* Visual Icon Badge (StudyZen 3D books counterpart) */}
+            <div className="w-12 h-12 rounded-2xl bg-white/20 border border-white/30 backdrop-blur-md flex items-center justify-center text-white shadow-sm shrink-0">
+              <BookOpen className="w-6 h-6 stroke-[2.2]" />
+            </div>
+          </div>
+
+          {/* Progress bar */}
+          <div className="mt-4 pt-2">
+            <div className="w-full bg-black/15 h-2 rounded-full overflow-hidden">
+              <div className="bg-white h-full rounded-full transition-all duration-500" style={{ width: '60%' }} />
+            </div>
+          </div>
+
+          {/* Learn more CTA button (White pill) */}
+          <div className="mt-4 flex items-center justify-between">
+            <Link
+              to="/student/dsa-track"
+              className="px-4 py-2 rounded-full bg-white text-[#1a1918] text-xs font-black shadow-xs active:scale-95 transition-transform inline-flex items-center gap-1.5"
+            >
+              <span>Learn more</span>
+              <ArrowRight className="w-3.5 h-3.5" />
+            </Link>
+            <span className="text-[11px] font-bold text-white/80 font-mono">142/300 Solved</span>
+          </div>
+        </div>
+
+        {/* ── StudyZen "Today's Plan" Section ── */}
+        <div className="space-y-3">
+          <div className="flex items-center justify-between px-1">
+            <h3 className="text-base font-black text-[#1a1918]">Today's Plan</h3>
+            <Link to="/student/list" className="text-xs font-bold th-text">
+              See All
+            </Link>
+          </div>
+
+          <div className="space-y-2.5">
+            {/* Plan Item 1: DSA Practice */}
+            <div className="card-pop stagger-2 p-4 rounded-2xl bg-white border border-[#e6e3da]/80 shadow-xs flex items-center justify-between gap-3">
+              <div className="flex items-center gap-3 min-w-0">
+                <div className="w-10 h-10 rounded-2xl th-bg-subtle th-text border th-border-subtle flex items-center justify-center shrink-0">
+                  <Terminal className="w-5 h-5 stroke-[2.2]" />
+                </div>
+                <div className="min-w-0">
+                  <h4 className="text-xs font-black text-[#1a1918] truncate">Data Structures (BST)</h4>
+                  <div className="flex items-center gap-2 text-[11px] text-[#78756c] font-medium mt-0.5">
+                    <span>1h 30m</span>
+                    <span>&bull;</span>
+                    <span>Study</span>
+                  </div>
+                </div>
+              </div>
+
+              {/* Circular SVG percentage indicator (StudyZen style 60%) */}
+              <div className="relative w-9 h-9 flex items-center justify-center shrink-0">
+                <svg className="w-9 h-9 -rotate-90" viewBox="0 0 36 36">
+                  <circle cx="18" cy="18" r="14" fill="none" stroke="#f4f2eb" strokeWidth="3" />
+                  <circle
+                    cx="18" cy="18" r="14" fill="none"
+                    stroke="var(--accent)" strokeWidth="3"
+                    strokeDasharray="87.96" strokeDashoffset="35"
+                    strokeLinecap="round"
+                  />
+                </svg>
+                <span className="absolute text-[9px] font-black th-text font-mono">60%</span>
+              </div>
+            </div>
+
+            {/* Plan Item 2: OS Lab */}
+            <div className="card-pop stagger-3 p-4 rounded-2xl bg-white border border-[#e6e3da]/80 shadow-xs flex items-center justify-between gap-3">
+              <div className="flex items-center gap-3 min-w-0">
+                <div className="w-10 h-10 rounded-2xl bg-[#ffb23f]/15 text-[#b87728] border border-[#ffb23f]/30 flex items-center justify-center shrink-0">
+                  <Code2 className="w-5 h-5 stroke-[2.2]" />
+                </div>
+                <div className="min-w-0">
+                  <h4 className="text-xs font-black text-[#1a1918] truncate">Virtual Memory Lab 05</h4>
+                  <div className="flex items-center gap-2 text-[11px] text-[#78756c] font-medium mt-0.5">
+                    <span>45m</span>
+                    <span>&bull;</span>
+                    <span>Continuous Lab</span>
+                  </div>
+                </div>
+              </div>
+
+              {/* Circular SVG percentage indicator 100% */}
+              <div className="relative w-9 h-9 flex items-center justify-center shrink-0">
+                <svg className="w-9 h-9 -rotate-90" viewBox="0 0 36 36">
+                  <circle cx="18" cy="18" r="14" fill="none" stroke="#f4f2eb" strokeWidth="3" />
+                  <circle
+                    cx="18" cy="18" r="14" fill="none"
+                    stroke="#3e7b54" strokeWidth="3"
+                    strokeDasharray="87.96" strokeDashoffset="0"
+                    strokeLinecap="round"
+                  />
+                </svg>
+                <span className="absolute text-[9px] font-black text-[#3e7b54] font-mono">100%</span>
+              </div>
+            </div>
+
+            {/* Plan Item 3: Computer Networks */}
+            <div className="card-pop stagger-4 p-4 rounded-2xl bg-white border border-[#e6e3da]/80 shadow-xs flex items-center justify-between gap-3">
+              <div className="flex items-center gap-3 min-w-0">
+                <div className="w-10 h-10 rounded-2xl bg-[#3e7b54]/15 text-[#3e7b54] border border-[#3e7b54]/30 flex items-center justify-center shrink-0">
+                  <Layers className="w-5 h-5 stroke-[2.2]" />
+                </div>
+                <div className="min-w-0">
+                  <h4 className="text-xs font-black text-[#1a1918] truncate">Problem Solving &amp; CN</h4>
+                  <div className="flex items-center gap-2 text-[11px] text-[#78756c] font-medium mt-0.5">
+                    <span>1h</span>
+                    <span>&bull;</span>
+                    <span>Practice</span>
+                  </div>
+                </div>
+              </div>
+
+              {/* Circular SVG percentage indicator 30% */}
+              <div className="relative w-9 h-9 flex items-center justify-center shrink-0">
+                <svg className="w-9 h-9 -rotate-90" viewBox="0 0 36 36">
+                  <circle cx="18" cy="18" r="14" fill="none" stroke="#f4f2eb" strokeWidth="3" />
+                  <circle
+                    cx="18" cy="18" r="14" fill="none"
+                    stroke="#f43f5e" strokeWidth="3"
+                    strokeDasharray="87.96" strokeDashoffset="61"
+                    strokeLinecap="round"
+                  />
+                </svg>
+                <span className="absolute text-[9px] font-black text-[#f43f5e] font-mono">30%</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* ── StudyZen AI Tip Card ── */}
+        <div className="card-pop stagger-5 p-4 rounded-2xl bg-gradient-to-r from-white via-white to-[#faf9f5] border border-[#e6e3da] shadow-xs flex items-center gap-3.5">
+          <div className="w-11 h-11 rounded-2xl th-bg text-white flex items-center justify-center shrink-0 shadow-xs">
+            <Bot className="w-6 h-6 stroke-[2]" />
+          </div>
+          <div className="flex-1 min-w-0">
+            <span className="text-[10px] font-black uppercase tracking-wider th-text block">
+              SkillTracker AI Advisor
+            </span>
+            <p className="text-xs text-[#1a1918] font-semibold mt-0.5 leading-snug">
+              You study best between 9-11 AM. Your OS Lab 05 deadline is in 4 hours!
             </p>
           </div>
-          <div className="mt-6 pt-4 border-t border-[#e6e3da] flex items-center justify-between">
-            <Link to="/student/dsa-track" className="text-sm font-bold text-[#d97757] hover:underline flex items-center gap-1">
-              <span>Solve in DSA Track</span>
-              <ChevronRight className="w-4 h-4" />
-            </Link>
-            {unsolvedDsa?.leetcodeUrl && (
-              <a href={unsolvedDsa.leetcodeUrl} target="_blank" rel="noopener noreferrer" className="text-xs sm:text-sm font-bold text-[#78756c] hover:text-[#1a1918]">
-                LeetCode &nearr;
-              </a>
-            )}
+          <ChevronRight className="w-4 h-4 text-[#9e9a90] shrink-0" />
+        </div>
+
+        {/* ── StudyZen 4-Stat Metric Cards Grid ── */}
+        <div className="grid grid-cols-2 gap-3">
+          <div className="card-pop stagger-6 p-4 rounded-2xl bg-white border border-[#e6e3da]/80 shadow-xs">
+            <div className="flex items-center justify-between text-xs text-[#78756c]">
+              <span className="text-[10px] font-bold uppercase">Study Time</span>
+              <span className="text-[10px] font-bold text-[#3e7b54] bg-[#3e7b54]/10 px-1.5 py-0.2 rounded-full">
+                +18%
+              </span>
+            </div>
+            <div className="text-lg font-black text-[#1a1918] font-mono mt-1">12h 45m</div>
+            <span className="text-[10px] text-[#78756c]">This week</span>
+          </div>
+
+          <div className="card-pop stagger-6 p-4 rounded-2xl bg-white border border-[#e6e3da]/80 shadow-xs">
+            <div className="flex items-center justify-between text-xs text-[#78756c]">
+              <span className="text-[10px] font-bold uppercase">Completed</span>
+              <span className="text-[10px] font-bold text-[#3e7b54] bg-[#3e7b54]/10 px-1.5 py-0.2 rounded-full">
+                +12%
+              </span>
+            </div>
+            <div className="text-lg font-black text-[#1a1918] font-mono mt-1">18 Labs</div>
+            <span className="text-[10px] text-[#78756c]">90% of syllabus</span>
+          </div>
+
+          <div className="card-pop stagger-7 p-4 rounded-2xl bg-white border border-[#e6e3da]/80 shadow-xs">
+            <div className="flex items-center justify-between text-xs text-[#78756c]">
+              <span className="text-[10px] font-bold uppercase">Focus Score</span>
+              <span className="text-[10px] font-bold text-[#3e7b54] bg-[#3e7b54]/10 px-1.5 py-0.2 rounded-full">
+                +15%
+              </span>
+            </div>
+            <div className="text-lg font-black th-text font-mono mt-1">86 / 100</div>
+            <span className="text-[10px] text-[#78756c]">Top 5% CSE</span>
+          </div>
+
+          <div className="card-pop stagger-7 p-4 rounded-2xl bg-white border border-[#e6e3da]/80 shadow-xs">
+            <div className="flex items-center justify-between text-xs text-[#78756c]">
+              <span className="text-[10px] font-bold uppercase">Streak</span>
+              <Flame className="w-3.5 h-3.5 text-[#ffb23f]" />
+            </div>
+            <div className="text-lg font-black text-[#1a1918] font-mono mt-1">17 Days</div>
+            <span className="text-[10px] text-[#78756c]">Commit streak</span>
           </div>
         </div>
+
       </div>
 
-      {/* Heatmap */}
-      <div className="card-pop stagger-8 p-6 sm:p-7 rounded-3xl bg-white border border-[#e6e3da] shadow-sm">
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-5">
-          <div className="flex items-center gap-3">
-            <div className="w-11 h-11 rounded-2xl bg-[#d97757]/10 text-[#d97757] flex items-center justify-center">
-              <Flame className="w-6 h-6 stroke-[2.2]" />
-            </div>
-            <div>
-              <h3 className="text-lg sm:text-xl font-bold text-[#1a1918]">Daily DSA Practice Streak: {student.streakDays} Days</h3>
-              <p className="text-sm text-[#78756c] mt-0.5">Commit-style heat tracking over the last 30 academic calendar days</p>
-            </div>
-          </div>
-          <button type="button" onClick={() => triggerTestNotification()} className="self-start sm:self-auto flex items-center gap-1.5 text-xs sm:text-sm font-bold text-[#d97757] hover:underline">
-            <Sparkles className="w-4 h-4" />
-            <span>Test Push Notification</span>
-          </button>
-        </div>
-        <div data-no-swipe="true" className="overflow-x-auto pb-2">
-          <div className="flex items-center gap-2 min-w-[540px]">
-            {streakDays.map((item, idx) => (
-              <div
-                key={idx}
-                title={`Day ${item.day}: ${item.count} problems solved`}
-                className={`flex-1 h-9 rounded-lg transition-all cursor-pointer flex items-center justify-center text-xs font-mono font-bold hover:scale-110 hover:-translate-y-0.5 ${
-                  item.solved
-                    ? item.count > 2 ? 'bg-[#d97757] text-white shadow-xs' : 'bg-[#d97757]/75 text-white'
-                    : 'bg-[#f4f2eb] text-[#9e9a90] border border-[#e6e3da]'
-                }`}
-              >
-                {item.count > 0 ? item.count : ''}
-              </div>
-            ))}
-          </div>
-        </div>
-        <div className="flex items-center justify-between text-xs sm:text-sm font-semibold text-[#78756c] mt-2.5">
-          <span>30 Days Ago</span>
-          <span>Today (Active Streak)</span>
-        </div>
-      </div>
-
-      {/* Diagnostic Review */}
-      <div className="card-pop stagger-8 p-6 sm:p-7 rounded-3xl bg-white border border-[#e6e3da] shadow-sm flex flex-col sm:flex-row sm:items-center justify-between gap-5">
-        <div className="flex items-start gap-4">
-          <div className="w-12 h-12 rounded-2xl bg-[#3e7b54]/10 text-[#3e7b54] border border-[#3e7b54]/20 flex items-center justify-center shrink-0">
-            <CheckCircle2 className="w-6 h-6 stroke-[2.2]" />
-          </div>
-          <div>
-            <span className="text-xs sm:text-sm uppercase font-black text-[#3e7b54] tracking-wider">Diagnostic Report Verified</span>
-            <h4 className="text-base sm:text-lg font-bold text-[#1a1918] mt-0.5">Operating Systems &amp; Data Structures Diagnostic Evaluation</h4>
-            <p className="text-sm sm:text-base text-[#4f4c46] mt-1">Score: <span className="font-bold text-[#1a1918]">95/100 (Distinction Passed)</span> &bull; Verified with emerald checkmarks</p>
-          </div>
-        </div>
-        <Link to="/student/result/diag-result-502" className="shrink-0 flex items-center gap-2 px-5 py-2.5 rounded-2xl bg-[#f4f2eb] hover:bg-[#edeae2] text-xs sm:text-sm font-bold text-[#1a1918] border border-[#e6e3da] transition-colors">
-          <span>View Scorecard</span>
-          <ArrowRight className="w-4 h-4" />
-        </Link>
-      </div>
     </div>
   );
 };
