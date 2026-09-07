@@ -62,7 +62,7 @@ export const NotificationDrawer = () => {
         {/* Drawer Header */}
         <div className="p-5 border-b border-[#e6e3da] flex items-center justify-between bg-white">
           <div className="flex items-center gap-2.5">
-            <div className="w-8 h-8 rounded-xl bg-[#d97757]/10 text-[#d97757] flex items-center justify-center">
+            <div className="w-8 h-8 rounded-xl th-bg-subtle th-text flex items-center justify-center">
               <Bell className="w-4 h-4 stroke-[2.2]" />
             </div>
             <div>
@@ -86,7 +86,7 @@ export const NotificationDrawer = () => {
           <div className="flex items-start justify-between gap-3">
             <div>
               <div className="flex items-center gap-1.5">
-                <Sparkles className="w-4 h-4 text-[#d97757]" />
+                <Sparkles className="w-4 h-4 th-text" />
                 <h4 className="text-sm font-bold text-[#1a1918]">Web Notifications Engine</h4>
               </div>
               <p className="text-xs text-[#78756c] mt-0.5">
@@ -105,7 +105,7 @@ export const NotificationDrawer = () => {
               <button
                 type="button"
                 onClick={requestNotificationPermission}
-                className="px-3 py-1.5 text-xs font-semibold bg-[#d97757] hover:bg-[#c15f3e] text-white rounded-xl transition-colors shadow-sm"
+                className="px-3 py-1.5 text-xs font-semibold th-bg hover:opacity-90 text-white rounded-xl transition-colors shadow-sm"
               >
                 Enable
               </button>
@@ -119,7 +119,7 @@ export const NotificationDrawer = () => {
             disabled={testSending}
             className="w-full flex items-center justify-center gap-2 px-3.5 py-2 rounded-xl bg-[#f4f2eb] hover:bg-[#edeae2] text-xs font-semibold text-[#1a1918] border border-[#e6e3da] active:scale-[0.98] transition-all disabled:opacity-60"
           >
-            <Volume2 className="w-4 h-4 text-[#d97757]" />
+            <Volume2 className="w-4 h-4 th-text" />
             <span>{testSending ? 'Sending Alert...' : 'Send Test Push Notification'}</span>
           </button>
 
@@ -162,7 +162,7 @@ export const NotificationDrawer = () => {
           <button
             type="button"
             onClick={markAllNotificationsAsRead}
-            className="ml-auto text-xs font-medium text-[#78756c] hover:text-[#d97757] transition-colors"
+            className="ml-auto text-xs font-medium text-[#78756c] hover:th-text transition-colors"
           >
             Mark read
           </button>
@@ -180,13 +180,13 @@ export const NotificationDrawer = () => {
                 key={n.id}
                 className={`p-4 rounded-2xl border transition-all ${
                   !n.read
-                    ? 'bg-white border-[#d97757]/40 shadow-sm'
+                    ? 'bg-white th-border-subtle shadow-sm'
                     : 'bg-[#f4f2eb] border-[#e6e3da] opacity-80'
                 }`}
               >
                 <div className="flex items-start justify-between gap-2">
                   <div className="flex items-center gap-2">
-                    {!n.read && <span className="w-2 h-2 rounded-full bg-[#d97757]" />}
+                    {!n.read && <span className="w-2 h-2 rounded-full th-bg" />}
                     <h4 className="text-sm font-bold text-[#1a1918]">{n.title}</h4>
                   </div>
                   <span className="text-xs text-[#9e9a90] shrink-0 font-medium">{n.timestamp}</span>
@@ -198,7 +198,7 @@ export const NotificationDrawer = () => {
                     <a
                       href={n.actionUrl}
                       onClick={() => setIsNotificationDrawerOpen(false)}
-                      className="text-[#d97757] hover:underline font-bold"
+                      className="th-text hover:underline font-bold"
                     >
                       View Details &rarr;
                     </a>

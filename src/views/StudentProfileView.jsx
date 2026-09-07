@@ -26,7 +26,7 @@ export const StudentProfileView = () => {
       <div className="p-6 sm:p-8 rounded-3xl bg-white border border-[#e6e3da] shadow-sm space-y-5">
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-5">
           <div className="flex items-center gap-4 sm:gap-5">
-            <div className="w-16 sm:w-20 h-16 sm:h-20 rounded-3xl bg-[#f4f2eb] border-2 border-[#d97757] flex items-center justify-center font-black text-2xl sm:text-3xl text-[#1a1918] shadow-sm">
+            <div className="w-16 sm:w-20 h-16 sm:h-20 rounded-3xl bg-[#f4f2eb] border-2 th-border flex items-center justify-center font-black text-2xl sm:text-3xl text-[#1a1918] shadow-sm">
               {student.name.charAt(0)}
             </div>
             <div>
@@ -51,12 +51,12 @@ export const StudentProfileView = () => {
               onClick={() => setIsCorrectionModalOpen(true)}
               className="flex items-center gap-2 px-4 py-2.5 rounded-2xl bg-[#f4f2eb] hover:bg-[#edeae2] text-xs sm:text-sm font-bold text-[#1a1918] border border-[#e6e3da] transition-colors"
             >
-              <AlertCircle className="w-4 h-4 text-[#d97757]" />
+              <AlertCircle className="w-4 h-4 th-text" />
               <span>Data Correction</span>
             </button>
             <Link
               to="/student/transcript"
-              className="flex items-center gap-2 px-4 py-2.5 rounded-2xl bg-[#d97757] hover:bg-[#c15f3e] text-xs sm:text-sm font-bold text-white transition-colors shadow-sm"
+              className="flex items-center gap-2 px-4 py-2.5 rounded-2xl th-bg hover:opacity-90 text-xs sm:text-sm font-bold text-white transition-opacity shadow-sm"
             >
               <FileText className="w-4 h-4" />
               <span>View Transcript</span>
@@ -90,7 +90,7 @@ export const StudentProfileView = () => {
       <div className="p-6 sm:p-8 rounded-3xl bg-white border border-[#e6e3da] shadow-sm space-y-4">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-2.5">
-            <Award className="w-5 h-5 text-[#d97757]" />
+            <Award className="w-5 h-5 th-text" />
             <h2 className="text-base sm:text-lg font-bold text-[#1a1918]">
               Verified Academic Record & SGPA History
             </h2>
@@ -118,7 +118,7 @@ export const StudentProfileView = () => {
                   <td className="py-3.5 px-5 font-bold text-[#1a1918]">Semester {sem.semester}</td>
                   <td className="py-3.5 px-5 text-center font-mono font-semibold text-[#4f4c46]">{sem.credits}</td>
                   <td className="py-3.5 px-5 text-center font-mono font-black text-[#1a1918]">{sem.sgpa}</td>
-                  <td className="py-3.5 px-5 text-center font-mono text-[#d97757] font-bold">{sem.grade}</td>
+                  <td className="py-3.5 px-5 text-center font-mono th-text font-bold">{sem.grade}</td>
                   <td className="py-3.5 px-5 text-right">
                     <span
                       className={`text-xs font-bold px-2.5 py-0.5 rounded-full ${
@@ -140,7 +140,7 @@ export const StudentProfileView = () => {
       {/* System Notifications & Device Settings */}
       <div className="p-6 sm:p-8 rounded-3xl bg-white border border-[#e6e3da] shadow-sm space-y-5">
         <div className="flex items-center gap-2.5">
-          <Smartphone className="w-5 h-5 text-[#d97757]" />
+          <Smartphone className="w-5 h-5 th-text" />
           <h2 className="text-base sm:text-lg font-bold text-[#1a1918]">
             System & Device Settings
           </h2>
@@ -151,7 +151,7 @@ export const StudentProfileView = () => {
           <div className="p-5 rounded-2xl bg-[#f4f2eb] border border-[#e6e3da] space-y-2.5">
             <div className="flex items-center justify-between">
               <span className="text-xs sm:text-sm font-bold text-[#1a1918] flex items-center gap-2">
-                <Bell className="w-4 h-4 text-[#d97757]" />
+                <Bell className="w-4 h-4 th-text" />
                 Web Push Notifications
               </span>
               <span
@@ -172,7 +172,7 @@ export const StudentProfileView = () => {
                 <button
                   type="button"
                   onClick={requestNotificationPermission}
-                  className="px-4 py-2 rounded-xl bg-[#d97757] hover:bg-[#c15f3e] text-xs sm:text-sm font-bold text-white shadow-sm"
+                  className="px-4 py-2 rounded-xl th-bg hover:opacity-90 text-xs sm:text-sm font-bold text-white shadow-sm"
                 >
                   Grant Permission
                 </button>

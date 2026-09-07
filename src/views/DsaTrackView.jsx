@@ -49,7 +49,7 @@ export const DsaTrackView = () => {
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-5">
           <div>
             <div className="flex items-center gap-2 mb-2">
-              <span className="p-2 rounded-xl bg-[#d97757]/10 text-[#d97757] border border-[#d97757]/20">
+              <span className="p-2 rounded-xl th-bg-subtle th-text border th-border-subtle">
                 <Terminal className="w-5 h-5 stroke-[2.2]" />
               </span>
               <h1 className="text-xl sm:text-2xl font-black tracking-tight text-[#1a1918]">
@@ -78,7 +78,7 @@ export const DsaTrackView = () => {
         {/* Progress Bar */}
         <div className="w-full bg-[#f4f2eb] h-2.5 rounded-full mt-5 overflow-hidden border border-[#e6e3da]">
           <div
-            className="bg-[#d97757] h-full rounded-full transition-all duration-500 shadow-xs"
+            className="th-bg h-full rounded-full transition-all duration-500 shadow-xs"
             style={{ width: `${progressPercent}%` }}
           />
         </div>
@@ -96,7 +96,7 @@ export const DsaTrackView = () => {
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
             placeholder="Search problem title, algorithm type, or category..."
-            className="w-full pl-10 pr-4 py-2.5 rounded-2xl bg-[#f4f2eb] border border-[#e6e3da] text-xs sm:text-sm text-[#1a1918] placeholder-[#9e9a90] focus:outline-none focus:border-[#d97757] transition-colors"
+            className="w-full pl-10 pr-4 py-2.5 rounded-2xl bg-[#f4f2eb] border border-[#e6e3da] text-xs sm:text-sm text-[#1a1918] placeholder-[#9e9a90] focus:outline-none focus:th-border transition-colors"
           />
         </div>
 
@@ -109,7 +109,7 @@ export const DsaTrackView = () => {
               onClick={() => setSelectedCategory(cat)}
               className={`px-3.5 py-1.5 rounded-xl shrink-0 font-bold transition-all ${
                 selectedCategory === cat
-                  ? 'bg-[#1a1918] text-white shadow-sm'
+                  ? 'th-bg text-white shadow-sm'
                   : 'bg-[#f4f2eb] text-[#78756c] hover:text-[#1a1918] hover:bg-[#edeae2] border border-[#e6e3da]'
               }`}
             >
@@ -128,7 +128,7 @@ export const DsaTrackView = () => {
               onClick={() => setSelectedDifficulty(diff)}
               className={`px-3 py-1 rounded-lg font-semibold transition-colors ${
                 selectedDifficulty === diff
-                  ? 'bg-[#d97757] text-white shadow-xs'
+                  ? 'th-bg text-white shadow-xs'
                   : 'text-[#78756c] hover:text-[#1a1918] hover:bg-[#f4f2eb]'
               }`}
             >
@@ -161,12 +161,12 @@ export const DsaTrackView = () => {
                   type="button"
                   onClick={() => toggleDsaProblem(problem.id)}
                   aria-label={problem.solved ? `Mark ${problem.title} unsolved` : `Mark ${problem.title} solved`}
-                  className="shrink-0 p-1 text-[#d97757] hover:scale-110 active:scale-90 transition-transform"
+                  className="shrink-0 p-1 th-text hover:scale-110 active:scale-90 transition-transform"
                 >
                   {problem.solved ? (
                     <CheckCircle2 className="w-6 h-6 text-[#3e7b54] stroke-[2.2]" />
                   ) : (
-                    <Circle className="w-6 h-6 text-[#9e9a90] hover:text-[#d97757] stroke-[1.8]" />
+                    <Circle className="w-6 h-6 text-[#9e9a90] hover:th-text stroke-[1.8]" />
                   )}
                 </button>
 
@@ -214,7 +214,7 @@ export const DsaTrackView = () => {
                 className="shrink-0 ml-3 px-3 py-2 rounded-xl text-[#78756c] hover:text-[#1a1918] hover:bg-[#f4f2eb] transition-colors flex items-center gap-1.5 text-xs sm:text-sm font-semibold"
               >
                 <span className="hidden sm:inline">LeetCode</span>
-                <ExternalLink className="w-4 h-4 text-[#d97757]" />
+                <ExternalLink className="w-4 h-4 th-text" />
               </a>
             </motion.div>
           ))

@@ -25,11 +25,12 @@ export const OverviewView = () => {
     { day: 'Sun', hours: 0.8 },
     { day: 'Mon', hours: 1.8 },
     { day: 'Tue', hours: 1.7 },
-    { day: 'Wed', hours: 3.4, active: true },
+    { day: 'Wed', hours: 3.4 },
     { day: 'Thu', hours: 2.5 },
     { day: 'Fri', hours: 3.8 },
     { day: 'Sat', hours: 2.2 }
   ];
+  const [selectedDayIndex, setSelectedDayIndex] = useState(3); // Default Wed
 
   return (
     <div className="space-y-5 sm:space-y-6 max-w-2xl mx-auto pb-6">
@@ -153,29 +154,39 @@ export const OverviewView = () => {
         {/* Interactive Line Chart with Bar underpinnings */}
         <div className="relative h-48 pt-6 pb-2">
           {/* Tooltip on active point */}
-          <div className="absolute top-2 left-[55%] -translate-x-1/2 bg-[#1a1918] text-white text-[10px] font-bold px-2.5 py-1 rounded-full shadow-md z-10">
-            2.5 Hours
+          <div
+            className="absolute top-1 -translate-x-1/2 bg-[#1a1918] text-white text-[10px] font-bold px-2.5 py-1 rounded-full shadow-md z-10 transition-all duration-200 pointer-events-none"
+            style={{ left: `${((selectedDayIndex + 0.5) / 7) * 100}%` }}
+          >
+            {studyHours[selectedDayIndex].hours}h ({studyHours[selectedDayIndex].day})
           </div>
 
           <div className="h-36 flex items-end justify-between gap-2 border-b border-[#f4f2eb] px-2">
-            {studyHours.map((item) => {
+            {studyHours.map((item, idx) => {
               const maxH = 4.0;
               const barHeightPct = (item.hours / maxH) * 100;
+              const isSelected = idx === selectedDayIndex;
               return (
-                <div key={item.day} className="flex-1 flex flex-col items-center h-full justify-end group">
+                <button
+                  key={item.day}
+                  type="button"
+                  onClick={() => setSelectedDayIndex(idx)}
+                  className="flex-1 flex flex-col items-center h-full justify-end group focus:outline-none cursor-pointer"
+                >
                   <div
-                    className="w-full max-w-[14px] rounded-t-md transition-all duration-300"
+                    className="w-full max-w-[14px] rounded-t-md transition-all duration-300 group-hover:opacity-100"
                     style={{
                       height: `${barHeightPct}%`,
-                      background: item.active
-                        ? 'linear-gradient(180deg, var(--accent) 0%, rgba(217,119,87,0.15) 100%)'
-                        : 'linear-gradient(180deg, rgba(217,119,87,0.3) 0%, rgba(217,119,87,0.05) 100%)'
+                      background: isSelected
+                        ? 'linear-gradient(180deg, var(--accent) 0%, var(--accent-subtle) 100%)'
+                        : 'linear-gradient(180deg, var(--accent-border) 0%, var(--accent-muted) 100%)',
+                      opacity: isSelected ? 1 : 0.65
                     }}
                   />
-                  <span className="text-[10px] font-bold text-[#78756c] mt-2 group-hover:th-text">
+                  <span className={`text-[10px] font-bold mt-2 transition-colors ${isSelected ? 'th-text' : 'text-[#78756c] group-hover:th-text'}`}>
                     {item.day}
                   </span>
-                </div>
+                </button>
               );
             })}
           </div>

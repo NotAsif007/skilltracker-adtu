@@ -69,7 +69,7 @@ export const LabsListView = () => {
       {/* Header */}
       <div className="p-6 sm:p-7 rounded-3xl bg-white border border-[#e6e3da] shadow-sm">
         <div className="flex items-center gap-2.5 mb-2">
-          <span className="p-2 rounded-xl bg-[#d97757]/10 text-[#d97757] border border-[#d97757]/20">
+          <span className="p-2 rounded-xl th-bg-subtle th-text border th-border-subtle">
             <FlaskConical className="w-5 h-5 stroke-[2.2]" />
           </span>
           <h1 className="text-xl sm:text-2xl font-black tracking-tight text-[#1a1918]">
@@ -144,7 +144,7 @@ export const LabsListView = () => {
                     <button
                       type="button"
                       onClick={() => handleOpenModal(lab)}
-                      className="flex items-center gap-2 px-4 py-2 rounded-xl bg-[#d97757] hover:bg-[#c15f3e] text-xs sm:text-sm font-bold text-white transition-colors shadow-sm"
+                      className="flex items-center gap-2 px-4 py-2 rounded-xl th-bg hover:opacity-90 text-xs sm:text-sm font-bold text-white transition-opacity shadow-sm"
                     >
                       <FileCode className="w-4 h-4" />
                       <span>Submit Code</span>
@@ -236,7 +236,7 @@ export const LabsListView = () => {
                 onChange={(e) => setSubmissionCode(e.target.value)}
                 required
                 rows={12}
-                className="w-full flex-1 p-4 rounded-2xl bg-[#1f1e1d] text-[#faf9f5] font-mono text-xs sm:text-sm focus:outline-none focus:ring-2 focus:ring-[#d97757] resize-none leading-relaxed"
+                className="w-full flex-1 p-4 rounded-2xl bg-[#1f1e1d] text-[#faf9f5] font-mono text-xs sm:text-sm focus:outline-none focus:ring-2 th-ring resize-none leading-relaxed"
               />
 
               {submitFeedback && (
@@ -263,7 +263,7 @@ export const LabsListView = () => {
                 <button
                   type="submit"
                   disabled={isSubmitting}
-                  className="flex items-center gap-2 px-5 py-2.5 text-xs sm:text-sm font-bold bg-[#d97757] hover:bg-[#c15f3e] text-white rounded-xl shadow-sm transition-colors disabled:opacity-60"
+                  className="flex items-center gap-2 px-5 py-2.5 text-xs sm:text-sm font-bold th-bg hover:opacity-90 text-white rounded-xl shadow-sm transition-opacity disabled:opacity-60"
                 >
                   <Send className="w-4 h-4" />
                   <span>{isSubmitting ? 'Recording...' : 'Submit Assessment'}</span>

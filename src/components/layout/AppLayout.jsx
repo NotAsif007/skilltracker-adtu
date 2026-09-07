@@ -12,26 +12,23 @@ import { useStudent } from '../../context/StudentContext';
 import { useSwipeNavigation } from '../../hooks/useSwipeNavigation';
 import { CheckCircle2 } from 'lucide-react';
 
-// Page wrapper: instant exit, smooth entrance rise
+// Clean, simple, non-choppy page transition — instant silky fade without vertical jumping
 const pageVariants = {
   enter: {
     opacity: 0,
-    y: 14,
   },
   center: {
     opacity: 1,
-    y: 0,
     transition: {
-      opacity: { duration: 0.22, ease: [0.25, 0.46, 0.45, 0.94] },
-      y: { type: 'spring', stiffness: 380, damping: 38, mass: 0.7 },
+      duration: 0.14,
+      ease: 'easeOut',
     }
   },
   exit: {
     opacity: 0,
-    y: -6,
     transition: {
-      opacity: { duration: 0.12, ease: 'easeIn' },
-      y: { duration: 0.12, ease: 'easeIn' },
+      duration: 0.08,
+      ease: 'easeIn',
     }
   }
 };
@@ -65,7 +62,7 @@ export const AppLayout = () => {
         {/* Dynamic Route Canvas inside Rounded Inner Container */}
         <div className="flex-1 flex flex-col min-w-0 lg:bg-[#faf9f5]/90 lg:rounded-3xl lg:border lg:border-[#e6e3da]/80 lg:shadow-[0_8px_30px_rgb(0,0,0,0.03)] lg:overflow-hidden">
           <main className="flex-1 pb-28 lg:pb-12 px-3 sm:px-6 lg:px-8 max-w-7xl w-full mx-auto pt-20 lg:pt-6 overflow-x-hidden">
-          <AnimatePresence mode="wait">
+          <AnimatePresence initial={false}>
             <motion.div
               key={location.pathname}
               variants={pageVariants}

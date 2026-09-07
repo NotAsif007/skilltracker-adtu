@@ -43,7 +43,7 @@ export const DataCorrectionModal = () => {
       >
         <div className="flex items-center justify-between pb-4 border-b border-[#e6e3da]">
           <div className="flex items-center gap-2.5">
-            <ShieldCheck className="w-5 h-5 text-[#d97757]" />
+            <ShieldCheck className="w-5 h-5 th-text" />
             <h3 className="text-base sm:text-lg font-bold text-[#1a1918]">
               Request Academic Data Correction
             </h3>
@@ -84,7 +84,7 @@ export const DataCorrectionModal = () => {
                 name="correctionField"
                 value={field}
                 onChange={(e) => setField(e.target.value)}
-                className="w-full px-3.5 py-2.5 rounded-2xl bg-[#f4f2eb] border border-[#e6e3da] text-xs sm:text-sm text-[#1a1918] focus:outline-none focus:border-[#d97757]"
+                className="w-full px-3.5 py-2.5 rounded-2xl bg-[#f4f2eb] border border-[#e6e3da] text-xs sm:text-sm text-[#1a1918] focus:outline-none focus:th-border"
               >
                 <option value="cgpa">Cumulative CGPA Discrepancy</option>
                 <option value="attendance">Biometric Attendance Record</option>
@@ -105,7 +105,7 @@ export const DataCorrectionModal = () => {
                 value={reason}
                 onChange={(e) => setReason(e.target.value)}
                 placeholder="Detail the discrepancy between physical grade sheet and SkillTracker portal..."
-                className="w-full px-3.5 py-2.5 rounded-2xl bg-[#f4f2eb] border border-[#e6e3da] text-xs sm:text-sm text-[#1a1918] placeholder-[#9e9a90] focus:outline-none focus:border-[#d97757]"
+                className="w-full px-3.5 py-2.5 rounded-2xl bg-[#f4f2eb] border border-[#e6e3da] text-xs sm:text-sm text-[#1a1918] placeholder-[#9e9a90] focus:outline-none focus:th-border"
               />
             </div>
 
@@ -120,7 +120,7 @@ export const DataCorrectionModal = () => {
                 value={referenceDocs}
                 onChange={(e) => setReferenceDocs(e.target.value)}
                 placeholder="e.g. ADTU-GRADE-SEM4-2026-088"
-                className="w-full px-3.5 py-2.5 rounded-2xl bg-[#f4f2eb] border border-[#e6e3da] text-xs sm:text-sm text-[#1a1918] placeholder-[#9e9a90] focus:outline-none focus:border-[#d97757]"
+                className="w-full px-3.5 py-2.5 rounded-2xl bg-[#f4f2eb] border border-[#e6e3da] text-xs sm:text-sm text-[#1a1918] placeholder-[#9e9a90] focus:outline-none focus:th-border"
               />
             </div>
 
@@ -134,7 +134,7 @@ export const DataCorrectionModal = () => {
               </button>
               <button
                 type="submit"
-                className="flex items-center gap-2 px-5 py-2.5 text-xs sm:text-sm font-bold bg-[#d97757] hover:bg-[#c15f3e] text-white rounded-2xl shadow-sm transition-colors"
+                className="flex items-center gap-2 px-5 py-2.5 text-xs sm:text-sm font-bold th-bg hover:opacity-90 text-white rounded-2xl shadow-sm transition-opacity"
               >
                 <Send className="w-4 h-4" />
                 <span>Submit Verification Request</span>

@@ -39,13 +39,13 @@ export const FloatingNotificationToast = () => {
           onClick={handleClick}
         >
           <div className="flex items-start gap-3.5">
-            <div className="w-10 h-10 rounded-2xl bg-[#d97757] text-white flex items-center justify-center shrink-0 shadow-sm mt-0.5">
+            <div className="w-10 h-10 rounded-2xl th-bg text-white flex items-center justify-center shrink-0 shadow-sm mt-0.5">
               <Bell className="w-5 h-5 stroke-[2.2]" />
             </div>
 
             <div className="flex-1 min-w-0">
               <div className="flex items-center justify-between gap-2">
-                <span className="text-[11px] font-bold uppercase tracking-wider text-[#d97757]">
+                <span className="text-[11px] font-bold uppercase tracking-wider th-text">
                   SkillTracker Push Notification
                 </span>
                 <span className="text-[11px] font-medium text-[#78756c]">Just now</span>
@@ -70,7 +70,7 @@ export const FloatingNotificationToast = () => {
                       e.stopPropagation();
                       requestNotificationPermission();
                     }}
-                    className="px-2.5 py-1 text-xs font-bold bg-[#d97757] hover:bg-[#c15f3e] text-white rounded-lg shadow-xs"
+                    className="px-2.5 py-1 text-xs font-bold th-bg hover:opacity-90 text-white rounded-lg shadow-xs"
                   >
                     Allow
                   </button>

@@ -20,7 +20,7 @@ export const LeaderboardView = () => {
 
   const rankBadgeClass = (rank) => {
     if (rank === 1) return 'bg-[#c4ad8f] text-white';
-    if (rank === 2) return 'bg-[#d97757] text-white';
+    if (rank === 2) return 'th-bg text-white';
     if (rank === 3) return 'bg-[#9e9a90] text-white';
     return 'bg-[#f4f2eb] text-[#78756c] border border-[#e6e3da]';
   };
@@ -29,11 +29,11 @@ export const LeaderboardView = () => {
     <div className="space-y-5 sm:space-y-6">
 
       {/* Header card */}
-      <div className="card-pop stagger-1 p-6 sm:p-7 rounded-3xl bg-white border border-[#e6e3da] shadow-sm">
+      <div className="card-pop p-6 sm:p-7 rounded-3xl bg-white border border-[#e6e3da] shadow-sm">
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
           <div>
             <div className="flex items-center gap-2 mb-2">
-              <span className="p-2 rounded-xl bg-[#d97757]/10 text-[#d97757] border border-[#d97757]/20">
+              <span className="p-2 rounded-xl th-bg-subtle th-text border th-border-subtle">
                 <Trophy className="w-5 h-5 stroke-[2.2]" />
               </span>
               <h1 className="text-xl sm:text-2xl font-black tracking-tight text-[#1a1918]">Cohort Leaderboard</h1>
@@ -48,7 +48,7 @@ export const LeaderboardView = () => {
             className="self-start sm:self-auto flex items-center gap-2 px-4 py-2.5 rounded-2xl bg-[#f4f2eb] hover:bg-[#edeae2] border border-[#e6e3da] text-xs sm:text-sm font-bold text-[#1a1918] transition-colors"
           >
             {maskEmails
-              ? <EyeOff className="w-4 h-4 text-[#d97757]" />
+              ? <EyeOff className="w-4 h-4 th-text" />
               : <Eye className="w-4 h-4 text-[#3e7b54]" />}
             <span>{maskEmails ? 'Email Masking: Active' : 'Email Masking: Off'}</span>
           </button>
@@ -57,27 +57,27 @@ export const LeaderboardView = () => {
 
       {/* Your standing */}
       {currentUserRecord && (
-        <div className="card-pop stagger-2 p-5 rounded-3xl bg-white border-2 border-[#d97757] shadow-md flex items-center gap-4">
-          <div className="w-12 h-12 rounded-2xl bg-[#d97757] text-white font-black text-xl flex items-center justify-center shrink-0">
+        <div className="card-pop p-5 rounded-3xl bg-white border-2 th-border shadow-md flex items-center gap-4">
+          <div className="w-12 h-12 rounded-2xl th-bg text-white font-black text-xl flex items-center justify-center shrink-0 shadow-xs">
             #{currentUserRecord.rank}
           </div>
           <div className="flex-1 min-w-0">
             <div className="flex items-center gap-2 flex-wrap">
               <span className="text-sm sm:text-base font-black text-[#1a1918]">{currentUserRecord.name}</span>
-              <span className="text-[11px] px-2 py-0.5 rounded-full bg-[#d97757]/15 text-[#d97757] font-bold shrink-0">YOU</span>
+              <span className="text-[11px] px-2 py-0.5 rounded-full th-bg-subtle th-text font-bold shrink-0">YOU</span>
             </div>
             <p className="text-xs text-[#78756c] font-mono mt-0.5 truncate">{currentUserRecord.enrollment}</p>
           </div>
           <div className="shrink-0 text-right">
             <span className="text-xs font-semibold text-[#78756c] block uppercase tracking-wider">Score</span>
-            <span className="text-xl font-black text-[#d97757] font-mono">{currentUserRecord.score}</span>
+            <span className="text-xl font-black th-text font-mono">{currentUserRecord.score}</span>
             <span className="text-xs text-[#78756c]"> pts</span>
           </div>
         </div>
       )}
 
       {/* Search bar */}
-      <div className="card-pop stagger-3 p-4 rounded-3xl bg-white border border-[#e6e3da] shadow-sm">
+      <div className="card-pop p-4 rounded-3xl bg-white border border-[#e6e3da] shadow-sm">
         <div className="relative">
           <Search className="absolute left-3.5 top-3 w-4 h-4 text-[#78756c]" />
           <input
@@ -87,7 +87,7 @@ export const LeaderboardView = () => {
             value={searchQuery}
             onChange={(e) => { setSearchQuery(e.target.value); setCurrentPage(1); }}
             placeholder="Search by name or enrollment ID..."
-            className="w-full pl-10 pr-4 py-2.5 rounded-2xl bg-[#f4f2eb] border border-[#e6e3da] text-xs sm:text-sm text-[#1a1918] placeholder-[#9e9a90] focus:outline-none focus:border-[#d97757] transition-colors"
+            className="w-full pl-10 pr-4 py-2.5 rounded-2xl bg-[#f4f2eb] border border-[#e6e3da] text-xs sm:text-sm text-[#1a1918] placeholder-[#9e9a90] focus:outline-none focus:th-border transition-colors"
           />
         </div>
         <p className="text-xs text-[#78756c] font-medium mt-2 text-right">
@@ -96,7 +96,7 @@ export const LeaderboardView = () => {
       </div>
 
       {/* Rankings — responsive flex list, zero horizontal scroll */}
-      <div className="card-pop stagger-4 rounded-3xl bg-white border border-[#e6e3da] shadow-sm overflow-hidden">
+      <div className="card-pop rounded-3xl bg-white border border-[#e6e3da] shadow-sm overflow-hidden">
 
         {/* Desktop column headers (hidden on mobile) */}
         <div className="hidden sm:flex items-center gap-3 px-5 py-3 bg-[#f4f2eb] border-b border-[#e6e3da] text-xs font-bold uppercase tracking-wider text-[#78756c]">
@@ -113,7 +113,7 @@ export const LeaderboardView = () => {
             <div
               key={st.enrollment}
               className={`flex items-center gap-3 px-4 sm:px-5 py-3.5 transition-colors ${
-                st.isCurrentUser ? 'bg-[#d97757]/6' : 'hover:bg-[#f4f2eb]/50'
+                st.isCurrentUser ? 'th-bg-subtle' : 'hover:bg-[#f4f2eb]/50'
               }`}
             >
               {/* Rank */}
@@ -126,7 +126,7 @@ export const LeaderboardView = () => {
               {/* Avatar */}
               <div
                 className="w-8 h-8 rounded-full flex items-center justify-center text-xs font-bold text-white shrink-0"
-                style={{ backgroundColor: st.avatarColor }}
+                style={{ backgroundColor: st.isCurrentUser ? 'var(--accent)' : st.avatarColor }}
               >
                 {st.name.charAt(0)}
               </div>
@@ -136,7 +136,7 @@ export const LeaderboardView = () => {
                 <div className="flex items-center gap-1.5 flex-wrap">
                   <span className="text-xs sm:text-sm font-bold text-[#1a1918] leading-tight">{st.name}</span>
                   {st.isCurrentUser && (
-                    <span className="text-[10px] px-1.5 py-px rounded bg-[#d97757] text-white font-bold shrink-0">YOU</span>
+                    <span className="text-[10px] px-1.5 py-px rounded th-bg text-white font-bold shrink-0">YOU</span>
                   )}
                 </div>
                 <div className="text-[11px] text-[#78756c] font-mono truncate">{st.enrollment}</div>
@@ -184,7 +184,7 @@ export const LeaderboardView = () => {
                   onClick={() => setCurrentPage(page)}
                   className={`w-8 h-8 rounded-xl text-xs sm:text-sm font-bold transition-colors ${
                     currentPage === page
-                      ? 'bg-[#1a1918] text-white'
+                      ? 'th-bg text-white shadow-xs'
                       : 'bg-[#f4f2eb] text-[#78756c] hover:text-[#1a1918]'
                   }`}
                 >

@@ -26,7 +26,7 @@ export const TopProgressBar = () => {
               duration: 0.32,
               ease: [0.16, 1, 0.3, 1]
             }}
-            className="w-full h-full bg-gradient-to-r from-[#d97757] via-[#e2886b] to-[#d97757] shadow-[0_1px_6px_rgba(217,119,87,0.45)]"
+            className="w-full h-full th-bg shadow-sm"
           />
         </div>
       )}

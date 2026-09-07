@@ -30,14 +30,14 @@ export const StudentTranscriptView = () => {
             onClick={() => setIsCorrectionModalOpen(true)}
             className="inline-flex items-center gap-2 px-4 py-2 text-xs sm:text-sm font-bold rounded-2xl bg-white border border-[#e6e3da] text-[#1a1918] hover:bg-[#f4f2eb] transition-colors shadow-xs"
           >
-            <AlertCircle className="w-4 h-4 text-[#d97757]" />
+            <AlertCircle className="w-4 h-4 th-text" />
             <span>Request Correction</span>
           </button>
 
           <button
             type="button"
             onClick={() => window.print()}
-            className="inline-flex items-center gap-2 px-5 py-2 text-xs sm:text-sm font-bold rounded-2xl bg-[#d97757] hover:bg-[#c15f3e] text-white transition-colors shadow-sm"
+            className="inline-flex items-center gap-2 px-5 py-2 text-xs sm:text-sm font-bold rounded-2xl th-bg hover:opacity-90 text-white transition-opacity shadow-sm"
           >
             <Printer className="w-4 h-4" />
             <span>Print Official Transcript</span>
@@ -89,7 +89,7 @@ export const StudentTranscriptView = () => {
           </div>
           <div>
             <span className="text-xs text-[#78756c] uppercase font-bold tracking-wider block">Cohort Standing</span>
-            <span className="text-3xl sm:text-4xl font-black text-[#d97757] font-mono mt-1 block">#{student.cohortRank}</span>
+            <span className="text-3xl sm:text-4xl font-black th-text font-mono mt-1 block">#{student.cohortRank}</span>
             <span className="text-xs text-[#78756c] mt-1 block">Top 3.3% of 59</span>
           </div>
           <div>
@@ -122,7 +122,7 @@ export const StudentTranscriptView = () => {
                     <td className="py-3.5 px-5 font-bold text-[#1a1918]">Semester {sem.semester}</td>
                     <td className="py-3.5 px-5 text-center font-mono font-semibold text-[#4f4c46]">{sem.credits}</td>
                     <td className="py-3.5 px-5 text-center font-mono font-black text-[#1a1918]">{sem.sgpa}</td>
-                    <td className="py-3.5 px-5 text-center font-mono text-[#d97757] font-bold">{sem.grade}</td>
+                    <td className="py-3.5 px-5 text-center font-mono th-text font-bold">{sem.grade}</td>
                     <td className="py-3.5 px-5 text-right font-bold text-[#3e7b54]">
                       {sem.status === 'Completed' ? 'PASSED' : 'CURRENT'}
                     </td>

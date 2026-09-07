@@ -1,12 +1,12 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
 
 export const THEMES = [
-  { id: 'terracotta', name: 'Terracotta', description: 'Warm & earthy (default)', accent: '#d97757', accentDark: '#c15f3e', accentSubtle: 'rgba(217,119,87,0.10)', accentBorder: 'rgba(217,119,87,0.22)' },
-  { id: 'ocean',      name: 'Ocean',      description: 'Deep & focused',           accent: '#2b7fff', accentDark: '#1a6be6', accentSubtle: 'rgba(43,127,255,0.10)',  accentBorder: 'rgba(43,127,255,0.22)' },
-  { id: 'sage',       name: 'Sage',       description: 'Calm & natural',           accent: '#3e7b54', accentDark: '#2f6a44', accentSubtle: 'rgba(62,123,84,0.10)',   accentBorder: 'rgba(62,123,84,0.22)' },
-  { id: 'amethyst',   name: 'Amethyst',   description: 'Bold & creative',          accent: '#7c3aed', accentDark: '#6b29d4', accentSubtle: 'rgba(124,58,237,0.10)',  accentBorder: 'rgba(124,58,237,0.22)' },
-  { id: 'rose',       name: 'Rose',       description: 'Vibrant & energetic',      accent: '#e11d48', accentDark: '#c01140', accentSubtle: 'rgba(225,29,72,0.10)',   accentBorder: 'rgba(225,29,72,0.22)' },
-  { id: 'slate',      name: 'Slate',      description: 'Minimal & professional',   accent: '#475569', accentDark: '#334155', accentSubtle: 'rgba(71,85,105,0.10)',   accentBorder: 'rgba(71,85,105,0.22)' },
+  { id: 'terracotta', name: 'Terracotta', description: 'Warm & earthy (default)', accent: '#d97757', accentDark: '#c15f3e', accentSubtle: 'rgba(217,119,87,0.12)', accentBorder: 'rgba(217,119,87,0.25)', accentMuted: 'rgba(217,119,87,0.06)' },
+  { id: 'ocean',      name: 'Ocean',      description: 'Deep & focused',           accent: '#2b7fff', accentDark: '#1a6be6', accentSubtle: 'rgba(43,127,255,0.12)',  accentBorder: 'rgba(43,127,255,0.25)',  accentMuted: 'rgba(43,127,255,0.06)' },
+  { id: 'sage',       name: 'Sage',       description: 'Calm & natural',           accent: '#3e7b54', accentDark: '#2f6a44', accentSubtle: 'rgba(62,123,84,0.12)',   accentBorder: 'rgba(62,123,84,0.25)',   accentMuted: 'rgba(62,123,84,0.06)' },
+  { id: 'amethyst',   name: 'Amethyst',   description: 'Bold & creative',          accent: '#7c3aed', accentDark: '#6b29d4', accentSubtle: 'rgba(124,58,237,0.12)',  accentBorder: 'rgba(124,58,237,0.25)',  accentMuted: 'rgba(124,58,237,0.06)' },
+  { id: 'rose',       name: 'Rose',       description: 'Vibrant & energetic',      accent: '#e11d48', accentDark: '#c01140', accentSubtle: 'rgba(225,29,72,0.12)',   accentBorder: 'rgba(225,29,72,0.25)',   accentMuted: 'rgba(225,29,72,0.06)' },
+  { id: 'slate',      name: 'Slate',      description: 'Minimal & professional',   accent: '#475569', accentDark: '#334155', accentSubtle: 'rgba(71,85,105,0.12)',   accentBorder: 'rgba(71,85,105,0.25)',   accentMuted: 'rgba(71,85,105,0.06)' },
 ];
 
 // Safe fallback so HMR / context-less renders never crash
@@ -26,10 +26,15 @@ export const ThemeProvider = ({ children }) => {
   const theme = THEMES.find((t) => t.id === themeId) || THEMES[0];
 
   useEffect(() => {
-    // Set data-theme on <html> — CSS handles the var overrides
+    // Set data-theme on <html> AND inline properties for guaranteed 100% cascade coverage
     document.documentElement.dataset.theme = themeId;
+    document.documentElement.style.setProperty('--accent', theme.accent);
+    document.documentElement.style.setProperty('--accent-dark', theme.accentDark);
+    document.documentElement.style.setProperty('--accent-subtle', theme.accentSubtle);
+    document.documentElement.style.setProperty('--accent-border', theme.accentBorder);
+    document.documentElement.style.setProperty('--accent-muted', theme.accentMuted);
     localStorage.setItem('skilltracker_theme', themeId);
-  }, [themeId]);
+  }, [themeId, theme]);
 
   return (
     <ThemeContext.Provider value={{ theme, themeId, setTheme: setThemeId, themes: THEMES }}>
